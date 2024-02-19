@@ -5,6 +5,6 @@ A Windows toolbox to help you with performance and getting you started with a Wi
 
 Recommended to run as admin or using NSudo.
 
-Some parts of code (or the ideas) are from Atlas, DuckOS (cannot find link. very sorry), Nyne (Neptune OS), CoutX and[(Privacy.Sexy](https://privacy.sexy/).
+Some parts of code (or the ideas) are from [Atlas](https://atlasos.net/), DuckOS (cannot find link. very sorry), [Nyne (Neptune OS)](https://github.com/NyneDZN/NeptuneOS), CoutX and[Privacy.Sexy](https://privacy.sexy/).
 
 Discord server for help and input: https://discord.gg/ScucWqPtY2
