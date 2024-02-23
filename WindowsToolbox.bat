@@ -65,7 +65,6 @@ reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching" /v "Sea
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" /v "SetDisableUXWUAccess" /t REG_DWORD /d 1 /f
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" /v "WUServer" /t REG_SZ /d " " /f
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Device Metadata" /v "PreventDeviceMetadataFromNetwork" /t REG_DWORD /d 1 /f
-reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate" /v "SusClientId" /t REG_SZ /d "00000000-0000-0000-0000-000000000000" /f
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds" /v "AllowBuildPreview" /t REG_DWORD /d "0" /f
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds" /v "EnableConfigFlighting" /t REG_DWORD /d "0" /f
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds" /v "EnableExperimentation" /t REG_DWORD /d "0" /f
@@ -145,10 +144,14 @@ echo Fix Windows or revert the script
 echo Many of these fixes do not work on a custom ISO. Be aware
 echo .
 echo Type 1 to enable Windows Store and Xbox
-echo Type 2 to fix errors in Windows (used only if the other fixes have not worked)
+echo Type 2 to fix Windows Update
+echo Type 3 to enable Windows Insider
+echo Type 4 to fix errors in Windows (used only if the other fixes have not worked)
 set /p Fixlist=
 if %Fixlist% == 1 goto :Restore1
-if %Fixlist% == 2 goto :fix
+if %Fixlist% == 2 goto :Restore2
+if %Fixlist% == 2 goto :Restore3
+if %Fixlist% == 4 goto :fix
 
 :Restore1
 echo Fixing Windows Store and Xbox
@@ -179,6 +182,25 @@ sc config "XboxGipSvc" start= demand
 sc config "sppsvc" start= demand
 sc config "InstallService" start= demand
 echo Xbox and Windows Store have been fixed
+goto :menu
+
+:Restore2
+reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\upfc.exe"
+reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\WaaSMedicAgent.exe"
+START upfc.exe
+reg delete "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+sc config "wuauserv" start= demand
+sc config "UsoSvc" start= demand
+sc config "bits" start= demand
+goto :menu
+
+:Restore3
+reg add "HKLM\SOFTWARE\Microsoft\WindowsSelfHost\UI\Visibility" /v "HideInsiderPage" /t REG_DWORD /d 0 /f
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds" /v "AllowBuildPreview" /t REG_DWORD /d 1 /f
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds" /v "EnableConfigFlighting" /t REG_DWORD /d 1 /f
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds" /v "EnableExperimentation" /t REG_DWORD /d 1 /f
+sc config wisvc start= demand
 goto :menu
 
 
@@ -632,7 +654,6 @@ NET STOP LanmanWorkstation
 echo lmhosts
 sc config lmhosts start= disabled
 NET STOP lmhosts
-echo luafv
 echo MSDTC
 sc config MSDTC start= disabled
 NET STOP MSDTC
@@ -1423,6 +1444,7 @@ curl -l -s https://winhelp2002.mvps.org/hosts.txt -o %SystemRoot%\System32\drive
 if exist %SystemRoot%\System32\drivers\etc\hosts.temp (
     cd %SystemRoot%\System32\drivers\etc
     echo # [added by YAWT] >> hosts.temp
+    echo Microsoft Telemetry sites
     echo 0.0.0.0 telemetry.microsoft.com >> hosts.temp
     echo 0.0.0.0 sqm.telemetry.microsoft.com >> hosts.temp
     echo 0.0.0.0 sqm.telecommand.telemetry.microsoft.com >> hosts.temp
@@ -1432,6 +1454,8 @@ if exist %SystemRoot%\System32\drivers\etc\hosts.temp (
     echo 0.0.0.0 www.powershellgallery.com >> hosts.temp
     echo 0.0.0.0 vortex.data.microsoft.com >> hosts.temp
     echo 0.0.0.0 wer.microsoft.com >> hosts.temp
+    echo Third party tracking/advertisement sites
+    echo 0.0.0.0 config.samsungads.com
     echo # End of HOSTS config >> hosts.temp
     del /f /q hosts
     ren hosts.temp hosts
@@ -1720,7 +1744,7 @@ reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\policies\Explorer" /v "N
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v "NoAutorun" /t REG_DWORD /d 1 /f
 echo Disable WDigest
 NET STOP WinRM
-sc config WinRM= disabled
+sc config WinRM start= disabled
 reg add "HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest" /v UseLogonCredential /t REG_DWORD /d 0 /f
 echo harden LSASS
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation" /v AllowProtectedCreds /t REG_DWORD /d 1 /f
