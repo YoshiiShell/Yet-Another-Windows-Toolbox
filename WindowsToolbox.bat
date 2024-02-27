@@ -1440,26 +1440,24 @@ reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" 
 reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v "SoftLandingEnabled" /t REG_DWORD /d 0 /f
 
 echo Blocking telemetry IP addresses...
-curl -l -s https://winhelp2002.mvps.org/hosts.txt -o %SystemRoot%\System32\drivers\etc\hosts.temp
-if exist %SystemRoot%\System32\drivers\etc\hosts.temp (
-    cd %SystemRoot%\System32\drivers\etc
-    echo # [added by YAWT] >> hosts.temp
-    echo Microsoft Telemetry sites
-    echo 0.0.0.0 telemetry.microsoft.com >> hosts.temp
-    echo 0.0.0.0 sqm.telemetry.microsoft.com >> hosts.temp
-    echo 0.0.0.0 sqm.telecommand.telemetry.microsoft.com >> hosts.temp
-    echo 0.0.0.0 watson.telemetry.microsoft.com >> hosts.temp
-    echo 0.0.0.0 wdcp.microsoft.com >> hosts.temp
-    echo 0.0.0.0 wer.microsoft.com >> hosts.temp
-    echo 0.0.0.0 www.powershellgallery.com >> hosts.temp
-    echo 0.0.0.0 vortex.data.microsoft.com >> hosts.temp
-    echo 0.0.0.0 wer.microsoft.com >> hosts.temp
-    echo Third party tracking/advertisement sites
-    echo 0.0.0.0 config.samsungads.com
-    echo # End of HOSTS config >> hosts.temp
-    del /f /q hosts
-    ren hosts.temp hosts
-)
+cd %SystemRoot%\System32\drivers\etc
+echo # [added by YAWT] >> hosts.temp
+echo 127.0.0.1 localhost >> hosts.temp
+echo Microsoft Telemetry sites
+echo 0.0.0.0 telemetry.microsoft.com >> hosts.temp
+echo 0.0.0.0 sqm.telemetry.microsoft.com >> hosts.temp
+echo 0.0.0.0 sqm.telecommand.telemetry.microsoft.com >> hosts.temp
+echo 0.0.0.0 watson.telemetry.microsoft.com >> hosts.temp
+echo 0.0.0.0 wdcp.microsoft.com >> hosts.temp
+echo 0.0.0.0 wer.microsoft.com >> hosts.temp
+echo 0.0.0.0 www.powershellgallery.com >> hosts.temp
+echo 0.0.0.0 vortex.data.microsoft.com >> hosts.temp
+echo 0.0.0.0 wer.microsoft.com >> hosts.temp
+echo Third party tracking/advertisement sites
+echo 0.0.0.0 config.samsungads.com
+echo # End of HOSTS config >> hosts.temp
+del /f /q hosts
+ren hosts.temp hosts
 
 echo Delete tasks
 :: killing DeviceCensus is needed so all of this works
