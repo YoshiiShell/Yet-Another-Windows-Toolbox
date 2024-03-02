@@ -140,18 +140,29 @@ pause
 goto :menu
 
 :fixlist
+cls
 echo Fix Windows or revert the script
-echo Many of these fixes do not work on a custom ISO. Be aware
-echo .
+echo Some of these fixes do not work on a custom ISO. Be aware
+echo.
 echo Type 1 to enable Windows Store and Xbox
 echo Type 2 to fix Windows Update
 echo Type 3 to enable Windows Insider
-echo Type 4 to fix errors in Windows (used only if the other fixes have not worked)
+echo Type 4 to enable background apps
+echo Type 5 to install OneDrive
+echo Type 6 to enable UAC
+echo Type 7 to enable Storage Sense
+echo Type 8 to fix errors in Windows (used only if the other fixes have not worked)
+echo Type 9 to go back to main menu
 set /p Fixlist=
 if %Fixlist% == 1 goto :Restore1
 if %Fixlist% == 2 goto :Restore2
-if %Fixlist% == 2 goto :Restore3
-if %Fixlist% == 4 goto :fix
+if %Fixlist% == 3 goto :Restore3
+if %Fixlist% == 4 goto :backroundstart
+if %Fixlist% == 5 goto :onedriveinstall
+if %Fixlist% == 6 goto :EnableUAC
+if %Fixlist% == 7 goto :enablestorage
+if %Fixlist% == 8 goto :fix
+if %Fixlist% == 9 goto :menu
 
 :Restore1
 echo Fixing Windows Store and Xbox
@@ -182,7 +193,7 @@ sc config "XboxGipSvc" start= demand
 sc config "sppsvc" start= demand
 sc config "InstallService" start= demand
 echo Xbox and Windows Store have been fixed
-goto :menu
+goto :fixlist
 
 :Restore2
 reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\upfc.exe"
@@ -193,7 +204,7 @@ reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
 sc config "wuauserv" start= demand
 sc config "UsoSvc" start= demand
 sc config "bits" start= demand
-goto :menu
+goto :fixlist
 
 :Restore3
 reg add "HKLM\SOFTWARE\Microsoft\WindowsSelfHost\UI\Visibility" /v "HideInsiderPage" /t REG_DWORD /d 0 /f
@@ -201,7 +212,7 @@ reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds" /v "AllowBuildP
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds" /v "EnableConfigFlighting" /t REG_DWORD /d 1 /f
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds" /v "EnableExperimentation" /t REG_DWORD /d 1 /f
 sc config wisvc start= demand
-goto :menu
+goto :fixlist
 
 
 :fix
@@ -214,7 +225,7 @@ cls
 color F6
  set /p check=Do you want to check the disk for errors? Warning: it may ask you to reboot. checking disk may take a while. (y/n) 
 if %check%==y CHKDSK /F
-if %check%==n goto :menu
+if %check%==n goto :fixlist
 
 :install
 cls
@@ -255,37 +266,31 @@ if %back%==n goto :menu
 
 :misc
 cls
-echo Type 1 to disable backround apps
-echo Type in 2 to enable backround apps
-echo Type in 3 to uninstall OneDrive
-echo Type in 4 to install OneDrive 
-echo Type in 5 to uninstall Edge
-echo Type in 6 to disable Windows Search Indexing
-echo Type in 7 to disable User Account Control
-echo Type in 8 to enable User Account Control
-echo Type in 9 to disable Update Health Tools
-echo Type in 10 to disable Readyboost
-echo Type in 11 to uninstall Windows Store
-echo Type in 12 to uninstall Calculator
-echo Type in 13 to disable Storage Sense
-echo Type in 14 to enable Storage Sense
-echo Type in 15 to go back to the main menu
+echo NOTICE: All scripts to restore features in here have been moved to "4 - Fix Windows"
+echo.
+echo Type in 1 to disable backround apps
+echo Type in 2 to uninstall OneDrive
+echo Type in 3 to uninstall Edge
+echo Type in 4 to disable Windows Search Indexing
+echo Type in 5 to disable User Account Control
+echo Type in 6 to disable Update Health Tools
+echo Type in 7 to disable Readyboost
+echo Type in 8 to uninstall Windows Store
+echo Type in 9 to uninstall Calculator
+echo Type in 10 to disable Storage Sense
+echo Type in 11 to go back to the main menu
 set /p menu2msg=
 if %menu2msg%==1 goto :backroundstop
-if %menu2msg%==2 goto :backroundstart
-if %menu2msg%==3 goto :onedriveuninstall
-if %menu2msg%==4 goto :onedriveinstall
-if %menu2msg%==5 goto :edgeuninstall
-if %menu2msg%==6 goto :Indexing
-if %menu2msg%==7 goto :DisableUAC
-if %menu2msg%==8 goto :EnableUAC
-if %menu2msg%==9 goto :HealthTools
-if %menu2msg%==10 goto :ReadyboostDeletion
-if %menu2msg%==11 goto :StoreRemoval
-if %menu2msg%==12 goto :CalcRemoval
-if %menu2msg%==13 goto :disablestorage
-if %menu2msg%==13 goto :enablestorage
-if %menu2msg%==15 goto :menu
+if %menu2msg%==2 goto :onedriveuninstall
+if %menu2msg%==3 goto :edgeuninstall
+if %menu2msg%==4 goto :Indexing
+if %menu2msg%==5 goto :DisableUAC
+if %menu2msg%==6 goto :HealthTools
+if %menu2msg%==7 goto :ReadyboostDeletion
+if %menu2msg%==8 goto :StoreRemoval
+if %menu2msg%==9 goto :CalcRemoval
+if %menu2msg%==10 goto :disablestorage
+if %menu2msg%==11 goto :menu
 pause
 goto :menu
 
@@ -301,7 +306,7 @@ echo Enabling backround apps...
 reg add HKCU\Software\Microsoft\WindowsNT\CurrentVersion\BackgroundAccessApplications /v GlobalUserDisabled /t REG_DWORD /d 0 /f
 :: 0 is user decision. 1 is force allow if you want to set it to that
 reg add HKLM\Software\Policies\Microsoft\Windows\AppPrivacy /v LetAppsRunInBackground /t REG_DWORD /d 0 /f
-goto :misc
+goto :fixlist
 
 :OneDriveuninstall
 echo Uninstalling OneDrive
@@ -319,7 +324,7 @@ goto :misc
 echo installing OneDrive...
 %SystemRoot%\System32\OneDriveSetup.exe
 echo done
-goto :misc
+goto :fixlist
 
 :edgeuninstall
 echo Killing Edge processes...
@@ -368,7 +373,7 @@ goto :misc
 :EnableUAC
 reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA /t REG_DWORD /d 1 /f
 pause
-goto :misc
+goto :fixlist
 
 
 :HealthTools
@@ -409,7 +414,7 @@ goto :misc
 
 :enablestorage
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy" /v "01" /t REG_DWORD /d 1 /f
-goto :misc
+goto :fixlist
 
 :debloat
 cls
@@ -636,9 +641,6 @@ NET STOP FDResPub
 echo fdPHost
 sc config fdPHost start= disabled
 NET STOP fdPHost
-echo InstallService
-sc config InstallService start= disabled
-NET STOP InstallService
 echo IpxlatCfgSvc
 sc config IpxlatCfgSvc start= disabled
 NET STOP IpxlatCfgSvc
@@ -1048,56 +1050,8 @@ powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Micros
 echo Microsoft-Windows-DeviceManagement-PolicyDefinition-SmartScreen
 powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Microsoft-Windows-DeviceManagement-PolicyDefinition-SmartScreen | ForEach-Object { $_.Name }"
 
-echo Microsoft-Windows-SmartScreen-Adm
-powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Microsoft-Windows-SmartScreen-Adm | ForEach-Object { $_.Name }"
-
-echo Microsoft-Windows-SmartScreen
-powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Microsoft-Windows-SmartScreen | ForEach-Object { $_.Name }"
-
-echo Windows-Defender-AM-Default-Definitions-Deployment-LanguagePack
-powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Windows-Defender-AM-Default-Definitions-Deployment-LanguagePack | ForEach-Object { $_.Name }"
-
-echo Windows-Defender-AM-Default-Definitions-Deployment
-powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Windows-Defender-AM-Default-Definitions-Deployment | ForEach-Object { $_.Name }"
-
-echo Windows-Defender-AppLayer-Group-Deployment-LanguagePack
-powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Windows-Defender-AppLayer-Group-Deployment-LanguagePack | ForEach-Object { $_.Name }"
-
-echo Windows-Defender-AppLayer-Group-Deployment
-powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Windows-Defender-AppLayer-Group-Deployment | ForEach-Object { $_.Name }"
-
-echo Windows-Defender-ApplicationGuard-Inbox-Deployment-LanguagePack
-powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Windows-Defender-ApplicationGuard-Inbox-Deployment-LanguagePack | ForEach-Object { $_.Name }"
-
-echo Windows-Defender-ApplicationGuard-Inbox-Deployment
-powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Windows-Defender-ApplicationGuard-Inbox-Deployment | ForEach-Object { $_.Name }"
-
-echo Windows-Defender-ApplicationGuard-Inbox-WOW64-Deployment-LanguagePack
-powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Windows-Defender-ApplicationGuard-Inbox-WOW64-Deployment-LanguagePack | ForEach-Object { $_.Name }"
-
-echo Windows-Defender-ApplicationGuard-Inbox-WOW64-Deployment
-powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Windows-Defender-ApplicationGuard-Inbox-WOW64-Deployment | ForEach-Object { $_.Name }"
-
-echo Windows-Defender-Branding
-powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Windows-Defender-Branding | ForEach-Object { $_.Name }"
-
-echo Windows-Defender-Core-Group-Deployment-LanguagePack
-powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Windows-Defender-Core-Group-Deployment-LanguagePack | ForEach-Object { $_.Name }"
-
-echo Windows-Defender-Core-Group-Deployment
-powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Windows-Defender-Core-Group-Deployment | ForEach-Object { $_.Name }"
-
-echo Windows-Defender-Events
-powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Windows-Defender-Events | ForEach-Object { $_.Name }"
-
 echo Windows Backup
 powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -Name *WindowsBackup* | Remove-AppxPackage"
-
-echo Microsoft-Windows-SecHealthUI.AppxMain
-powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Microsoft-Windows-SecHealthUI.AppxMain | ForEach-Object { $_.Name }"
-
-echo Microsoft-Windows-SecHealthUI.AppxSetup
-powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Microsoft-Windows-SecHealthUI.AppxSetup | ForEach-Object { $_.Name }"
 
 echo Microsoft-Windows-AllJoyn-Api
 powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Microsoft-Windows-AllJoyn-Api | ForEach-Object { $_.Name }"
@@ -1892,6 +1846,10 @@ echo Windows-Defender-Service
 powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Windows-Defender-Service | ForEach-Object { $_.Name }"
 echo Windows-Defender-UI
 powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Windows-Defender-UI | ForEach-Object { $_.Name }"
+echo Microsoft-Windows-SecHealthUI.AppxMain
+powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Microsoft-Windows-SecHealthUI.AppxMain | ForEach-Object { $_.Name }"
+echo Microsoft-Windows-SecHealthUI.AppxSetup
+powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Microsoft-Windows-SecHealthUI.AppxSetup | ForEach-Object { $_.Name }"
 echo Disable UI of Windows Defender
 :: there is supposed to be a command to allow it to uninstall. but i cannot figure out how to get the SID of the user and use it for the regkey
 PowerShell -ExecutionPolicy Unrestricted -Command "Get-AppxPackage 'Microsoft.Windows.SecHealthUI' | Remove-AppxPackage"
