@@ -539,7 +539,7 @@ reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\System" /v "RSoPLogging" /t RE
  sc config "RemoteAccess" start= disabled
  NET STOP RemoteAccess
  echo OneSyncSvc
- sc config "OneSyncSvc"
+ sc config "OneSyncSvc" start= disabled
  NET STOP OneSyncSvc
  echo UevAgentService
  sc config "UevAgentService" start= disabled
@@ -569,7 +569,7 @@ reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\System" /v "RSoPLogging" /t RE
  sc config "WpnService" start= disabled
  NET STOP WpnService
  echo AssignedAccessManagerSvc
- sc delete AssignedAccessManagerSvc
+ sc config AssignedAccessManagerSvc start= disabled
  NET STOP AssignedAccessManagerSvc
  echo diagnosticshub.standardcollector.service
  sc config "diagnosticshub.standardcollector.service" start= disabled
