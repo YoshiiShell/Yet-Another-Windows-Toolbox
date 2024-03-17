@@ -38,11 +38,17 @@ goto :menu
 
 
 :UpdateRemoval
+echo This will disable Updates and Windows Store. Are you sure ou want to continue? (y/n)
+set /p StoreQuestion= 
+if %StoreQuestion% == y goto :UpdateDisable
+if %StoreQuestion% == n goto :menu
 echo Stop and disable services concerning Windows Update
 sc config "wuauserv" start= disabled
 NET STOP "wuauserv"
 sc config "UsoSvc" start= disabled
 NET STOP "UsoSvc"
+sc config "wisvc" start= disabled
+NET STOP "wisvc"
 reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\WaaSMedicAgent.exe" /v "Debugger" /t REG_SZ /d "%WINDIR%\System32\taskkill.exe" /f
 echo Disable updates through registry
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" /v "ExcludeWUDriversInQualityUpdate" /t REG_DWORD /d 1 /f
@@ -615,7 +621,6 @@ sc config bthserv start= disabled
 NET STOP bthserv
 echo NetBT
 sc config NetBT start=disabled
-NET STOP NETBt
 goto :afterBluetooth
 :afterBluetooth
 echo CryptSvc
@@ -661,7 +666,6 @@ sc config MSDTC start= disabled
 NET STOP MSDTC
 echo Ndu (Windows Network Data Usage)
 sc config Ndu start= disabled
-NET STOP Ndu
 echo PcaSvc
 sc config PcaSvc start= disabled
 NET STOP PcaSvc
@@ -767,9 +771,6 @@ NET STOP fhsvc
 echo wlpasvc
 sc config wlpasvc start= disabled
 NET STOP wlpasvc
-echo Windows Insider Service
-sc config wisvc start= disabled
-NET STOP wisvc
 set /p RAID=Disabling VSTXRAID will possibly break RAID. are you sure you want to do this? (y/n)
 if %RAID%==y sc config VSTXRAID start= disabled
 echo AppVClient
