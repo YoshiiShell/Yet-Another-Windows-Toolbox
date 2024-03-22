@@ -1550,7 +1550,7 @@ reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\ReserveManager" /v "Misc
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\ReserveManager" /v "PassedPolicy" /t REG_DWORD /d "0" /f
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\ReserveManager" /v "ShippedWithReserves" /t REG_DWORD /d "0" /f
 echo fsutil (thanks DuckOS)
-set /p PagingQuestion= Do you want to disable paging file encryption (n/y)? (increases performance but decreases security slightly)
+set /p PagingQuestion= Do you want to disable paging file encryption (y/n)? (increases performance but decreases security slightly)
 if %PagingQuestion%==y goto :Paging
 if %PagingQuestion%==n goto :AfterPaging
 :Paging
@@ -1604,7 +1604,7 @@ reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" /v "ThemeChanges
 echo Disable File History
 reg add "HKLM\Software\Policies\Microsoft\Windows\FileHistory" /v "Disabled" /t REG_DWORD /d 1 /f
 echo Faster startup and shutdown
-echo Disable boot circle (boot loading icon)
+echo Disable boot circle (boot graphics)
 bcdedit /set quietboot yes
 echo Legacy boot menu
 bcdedit /set bootmenupolicy Legacy
