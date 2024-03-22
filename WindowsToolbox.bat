@@ -199,6 +199,7 @@ sc config "XboxGipSvc" start= demand
 sc config "sppsvc" start= demand
 sc config "InstallService" start= demand
 sc config "LicenseManager" start= demand
+sc config "wuauserv" start= demand
 echo Xbox and Windows Store have been fixed
 goto :fixlist
 
@@ -210,7 +211,7 @@ reg delete "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
 sc config "wuauserv" start= demand
 sc config "UsoSvc" start= demand
-sc config "bits" start= demand
+sc config "bits" start= auto
 goto :fixlist
 
 :Restore3
