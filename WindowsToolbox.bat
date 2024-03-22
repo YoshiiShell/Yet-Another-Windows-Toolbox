@@ -189,6 +189,8 @@ powershell -Command "Add-AppxPackage -RegisterByFamilyName -MainPackage 'Microso
 powershell -Command "Add-AppxPackage -RegisterByFamilyName -MainPackage 'Microsoft.XboxApp_8wekyb3d8bbwe'"
 powershell -Command "Add-AppxPackage -RegisterByFamilyName -MainPackage 'Microsoft.XboxIdentityProvider_8wekyb3d8bbwe'"
 powershell -Command "Add-AppxPackage -RegisterByFamilyName -MainPackage 'Microsoft.XboxSpeechToTextOverlay_8wekyb3d8bbwe'"
+powershell -Command "Add-AppxPackage -RegisterByFamilyName -MainPackage '*Microsoft.WindowsStore*'"
+powershell -Command "Add-AppxPackage -RegisterByFamilyName -MainPackage '*Microsoft.StorePurchaseApp*'"
 echo Enabling Windows Store and Xbox services
 sc config "DoSvc" start= demand
 sc config "bits" start= auto
@@ -203,6 +205,8 @@ sc config "wuauserv" start= demand
 echo Xbox and Windows Store have been fixed
 goto :fixlist
 
+powershell -ExecutionPolicy Unrestricted "Get-Appxpackage '*Microsoft.WindowsStore*' | Remove-AppxPackage"
+powershell -ExecutionPolicy Unrestricted "Get-Appxpackage '*Microsoft.StorePurchaseApp*' | Remove-AppxPackage"
 :Restore2
 reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\upfc.exe"
 reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\WaaSMedicAgent.exe"
