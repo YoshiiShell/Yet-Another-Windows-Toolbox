@@ -191,13 +191,14 @@ powershell -Command "Add-AppxPackage -RegisterByFamilyName -MainPackage 'Microso
 powershell -Command "Add-AppxPackage -RegisterByFamilyName -MainPackage 'Microsoft.XboxSpeechToTextOverlay_8wekyb3d8bbwe'"
 echo Enabling Windows Store and Xbox services
 sc config "DoSvc" start= demand
-sc config "bits" start= demand
+sc config "bits" start= auto
 sc config "XblAuthManager" start= demand
 sc config "XblGameSave" start= demand
 sc config "XboxNetApiSvc" start= demand
 sc config "XboxGipSvc" start= demand
 sc config "sppsvc" start= demand
 sc config "InstallService" start= demand
+sc config "LicenseManager" start= demand
 echo Xbox and Windows Store have been fixed
 goto :fixlist
 
@@ -1639,7 +1640,7 @@ echo Do not allow Sound Recorder to run if not uninstalled
 reg add "HKLM\Software\Policies\Microsoft\SoundRecorder" /v "Soundrec" /t REG_DWORD /d 1 /f
 
 echo Security
-echo Permissions
+echo Configure program permissions
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appDiagnostics" /v "Value" /t REG_SZ /d "Deny" /f
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appointments" /v "Value" /t REG_SZ /d "Deny" /f
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\bluetoothSync" /v "Value" /t REG_SZ /d "Deny" /f
