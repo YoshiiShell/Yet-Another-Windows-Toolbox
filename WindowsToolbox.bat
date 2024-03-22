@@ -205,8 +205,6 @@ sc config "wuauserv" start= demand
 echo Xbox and Windows Store have been fixed
 goto :fixlist
 
-powershell -ExecutionPolicy Unrestricted "Get-Appxpackage '*Microsoft.WindowsStore*' | Remove-AppxPackage"
-powershell -ExecutionPolicy Unrestricted "Get-Appxpackage '*Microsoft.StorePurchaseApp*' | Remove-AppxPackage"
 :Restore2
 reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\upfc.exe"
 reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\WaaSMedicAgent.exe"
