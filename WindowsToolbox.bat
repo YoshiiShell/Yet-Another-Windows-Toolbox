@@ -782,9 +782,6 @@ sc config AppVClient start= disabled
 NET STOP AppVClient
 
 echo Removing unused apps/bloat
-echo 1527c705-839a-4832-9118-54d4Bd6a0c89
-:: I actually forgot what this is lmao
-powershell -ExecutionPolicy Unrestricted "Get-AppxPackage  1527c705-839a-4832-9118-54d4Bd6a0c89*' | Remove-AppxPackage"
 
 echo Cortana
 powershell -ExecutionPolicy Unrestricted "Get-AppxPackage  '*Microsoft.549981C3F5F10*' | Remove-AppxPackage"
@@ -1856,8 +1853,8 @@ powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Micros
 echo Microsoft-Windows-SecHealthUI.AppxSetup
 powershell -ExecutionPolicy Unrestricted "Get-AppxPackage -AllUsers -Name Microsoft-Windows-SecHealthUI.AppxSetup | ForEach-Object { $_.Name }"
 echo Disable UI of Windows Defender
-:: there is supposed to be a command to allow it to uninstall. but i cannot figure out how to get the SID of the user and use it for the regkey
-PowerShell -ExecutionPolicy Unrestricted -Command "Get-AppxPackage 'Microsoft.Windows.SecHealthUI' | Remove-AppxPackage"
+:: I found an SID script, Will use after 5.0
+:: PowerShell -ExecutionPolicy Unrestricted -Command "Get-AppxPackage 'Microsoft.Windows.SecHealthUI' | Remove-AppxPackage"
 echo Hide Defender
 reg delete "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v "SecurityHealth" /f
 echo Don't reinstall Windows Defender
