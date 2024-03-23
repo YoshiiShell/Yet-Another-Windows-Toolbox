@@ -878,10 +878,10 @@ powershell -ExecutionPolicy Unrestricted "Get-AppxPackage '*MicrosoftCorporation
 echo Phone Link
 powershell -ExecutionPolicy Unrestricted "Get-AppxPackage 'Microsoft.YourPhone' | Remove-AppxPackage"
 
-echo Your Phone (already deprovisioned)
+echo Your Phone
 powershell -ExecutionPolicy Unrestricted "Get-AppxPackage 'Microsoft.WindowsPhone' | Remove-AppxPackage"
 
-echo Microsoft Phone
+echo Microsoft Phone (already deprovisioned)
 powershell -ExecutionPolicy Unrestricted "Get-AppxPackage 'Microsoft.Windows.Phone' | Remove-AppxPackage"
 
 echo Groove Music
