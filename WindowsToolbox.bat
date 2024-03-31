@@ -1,5 +1,7 @@
 @echo off
 
+:: Created by YoshiiShell/Yoshii64.
+
 :menu
 echo Needed to do before debloat
 reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Notifications\Settings\Windows.SystemToast.SecurityAndMaintenance" /v "Enabled" /t REG_DWORD /d 0 /f
@@ -1700,7 +1702,7 @@ echo Disable WDigest
 NET STOP WinRM
 sc config WinRM start= disabled
 reg add "HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest" /v UseLogonCredential /t REG_DWORD /d 0 /f
-echo harden LSASS
+echo Harden LSASS
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation" /v AllowProtectedCreds /t REG_DWORD /d 1 /f
 reg add "HKLM\SYSTEM\CurrentControlSet\Control\Lsa" /v RunAsPPL /t REG_DWORD /d 1 /f
 echo Disable LLMNR. Replaced by DNS
