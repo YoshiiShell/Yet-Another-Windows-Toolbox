@@ -412,6 +412,7 @@ goto :misc
 echo Removing Windows Store
 powershell -ExecutionPolicy Unrestricted "Get-Appxpackage '*Microsoft.WindowsStore*' | Remove-AppxPackage"
 powershell -ExecutionPolicy Unrestricted "Get-Appxpackage '*Microsoft.StorePurchaseApp*' | Remove-AppxPackage"
+powershell -ExecutionPolicy Unrestricted "Get-Appxpackage *Microsoft.Services.Store.Engagement_10.0.23012.0_x64__8wekyb3d8bbwe* | Remove-AppxPackage"
 goto :misc
 
 :CalcRemoval
@@ -1952,32 +1953,24 @@ echo Done!
 goto :menu
 
 :power
-echo Setting power plan to High Performance
-powercfg /setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
-echo Power settings
+echo Duplicate hidden Ultimate Performance setting
+powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61
+echo Setting power plan to Ultimate Performance
+powercfg /setactive e9a42b02-d5df-448d-aa00-03f14749eb61
+echo Disable power telemetry
 reg add "HKLM\System\CurrentControlSet\Control\Power" /v "EnergyEstimationEnabled" /t REG_DWORD /d "0" /f
 reg add "HKLM\System\CurrentControlSet\Control\Power" /v "EventProcessorEnabled" /t REG_DWORD /d "0" /f
+echo Turn off power throttling
 reg add "HKLM\System\CurrentControlSet\Control\Power\PowerThrottling" /v "PowerThrottlingOff" /t REG_DWORD /d "1" /f
-powercfg -setacvalueindex scheme_current sub_processor THROTTLING 0
-powercfg -setacvalueindex scheme_current sub_none DEVICEIDLE 0
-powercfg -setacvalueindex scheme_current sub_none CONSOLELOCK 0
-powercfg -setacvalueindex scheme_current 2a737441-1930-4402-8d77-b2bebba308a3 d4e98f31-5ffe-4ce1-be31-1b38b384c009 0
-powercfg -setacvalueindex scheme_current 2a737441-1930-4402-8d77-b2bebba308a3 48e6b7a6-50f5-4782-a5d4-53bb8f07e226 0
-powercfg -setacvalueindex scheme_current SUB_PCIEXPRESS ASPM 0
-powercfg -setacvalueindex scheme_current SUB_DISK 0b2d69d7-a2a1-449c-9680-f91c70521c60 0
-powercfg -setacvalueindex scheme_current SUB_DISK dbc9e238-6de9-49e3-92cd-8c2b4946b472 1
-powercfg -setacvalueindex scheme_current SUB_DISK fc95af4d-40e7-4b6d-835a-56d131dbc80e 1
-powercfg -setacvalueindex scheme_current sub_processor PERFAUTONOMOUS 1
-powercfg -setacvalueindex scheme_current sub_processor PERFEPP 0
-powercfg -setacvalueindex scheme_current sub_processor PERFBOOSTMODE 1
-powercfg -setacvalueindex scheme_current sub_processor PERFBOOSTPOL 100
-powercfg -setacvalueindex scheme_current SUB_SLEEP AWAYMODE 0
-powercfg -setacvalueindex scheme_current SUB_SLEEP ALLOWSTANDBY 0
-powercfg -setacvalueindex scheme_current SUB_SLEEP HYBRIDSLEEP 0
-powercfg -setacvalueindex scheme_current sub_processor PROCTHROTTLEMIN 100
-powercfg -setacvalueindex scheme_current sub_processor IDLEPROMOTE 100
-powercfg -setacvalueindex scheme_current sub_processor IDLEDEMOTE 100
-powercfg -setacvalueindex scheme_current sub_processor IDLESCALING 0
+echo Set USB-3 power to maxium performance
+powercfg -setacvalueindex 11111111-1111-1111-1111-111111111111 2a737441-1930-4402-8d77-b2bebba308a3 d4e98f31-5ffe-4ce1-be31-1b38b384c009 0
+echo Turn off very low power modes for storage devices/drives
+Reg add "HKLM\SYSTEM\CurrentControlSet\Control\Storage" /v "StorageD3InModernStandby" /t REG_DWORD /d "0" /f
+echo Disable network card power throttling
+Reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\NDIS\Parameters" /v "DefaultPnPCapabilities" /t REG_DWORD /d "24" /f
+echo Disable ACPI power states
+:: For the nerds, this disables C2 and C3 ACPI power states (https://learn.microsoft.com/sl-SI/troubleshoot/windows-server/virtualization/virtual-machines-slow-startup-shutdown)
+reg add "HKLM\System\CurrentControlSet\Control\Processor" /v "Capabilities" /t REG_DWORD /d 0x0007e066 /f
 powercfg -setactive scheme_current
 goto :menu
 
