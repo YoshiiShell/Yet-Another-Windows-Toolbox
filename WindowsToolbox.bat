@@ -2,6 +2,10 @@
 
 :: Created by YoshiiShell/Yoshii64.
 
+:: Check SID script from Nyne
+for /f "tokens=2 delims==" %%A in ('wmic useraccount where "name='%username%'" get sid /value') do (set "SID=%%A")
+
+
 :menu
 echo Needed to do before debloat
 reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Notifications\Settings\Windows.SystemToast.SecurityAndMaintenance" /v "Enabled" /t REG_DWORD /d 0 /f
@@ -44,6 +48,7 @@ echo This will disable Updates and Windows Store. Are you sure ou want to contin
 set /p StoreQuestion= 
 if %StoreQuestion% == y goto :UpdateDisable
 if %StoreQuestion% == n goto :menu
+:UpdateDisable
 echo Stop and disable services concerning Windows Update
 sc config "wuauserv" start= disabled
 NET STOP "wuauserv"
@@ -51,7 +56,10 @@ sc config "UsoSvc" start= disabled
 NET STOP "UsoSvc"
 sc config "wisvc" start= disabled
 NET STOP "wisvc"
+echo Make sure Windows Update cannot run
 reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\WaaSMedicAgent.exe" /v "Debugger" /t REG_SZ /d "%WINDIR%\System32\taskkill.exe" /f
+reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\WindowsUpdateElevatedInstaller.exe" /v "Debugger" /t REG_SZ /d "%WINDIR%\System32\taskkill.exe" /f
+reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\wuauclt.exe" /v "Debugger" /t REG_SZ /d "%WINDIR%\System32\taskkill.exe" /f
 echo Disable updates through registry
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" /v "ExcludeWUDriversInQualityUpdate" /t REG_DWORD /d 1 /f
 reg add "HKLM\SOFTWARE\Policies\Microsoft\MRT" /v "DontOfferThroughWUAU" /t REG_DWORD /d "1" /f
@@ -210,6 +218,8 @@ goto :fixlist
 :Restore2
 reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\upfc.exe"
 reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\WaaSMedicAgent.exe"
+reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\WindowsUpdateElevatedInstaller.exe"
+reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\wuauclt.exe"
 START upfc.exe
 reg delete "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
@@ -1751,7 +1761,7 @@ reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\MitigationOptions" /v "Miti
 echo mitigate msdt
 reg delete HKEY_CLASSES_ROOT\ms-msdt /f
 set /p Hibernation= Do you want to disable hibernation? (y/n)
-if %Hibernation%==y powercfg /h off >nul
+if %Hibernation%==y powercfg /h off
 if %Hibernation%==n goto :QuestionLol
 
 :QuestionLol
@@ -1981,7 +1991,7 @@ reg add "HKLM\System\CurrentControlSet\Control\Power" /v "EventProcessorEnabled"
 echo Turn off power throttling
 reg add "HKLM\System\CurrentControlSet\Control\Power\PowerThrottling" /v "PowerThrottlingOff" /t REG_DWORD /d "1" /f
 echo Set USB-3 power to maxium performance
-powercfg -setacvalueindex 11111111-1111-1111-1111-111111111111 2a737441-1930-4402-8d77-b2bebba308a3 d4e98f31-5ffe-4ce1-be31-1b38b384c009 0
+powercfg -setacvalueindex e9a42b02-d5df-448d-aa00-03f14749eb61 2a737441-1930-4402-8d77-b2bebba308a3 d4e98f31-5ffe-4ce1-be31-1b38b384c009 0
 echo Turn off very low power modes for storage devices/drives
 Reg add "HKLM\SYSTEM\CurrentControlSet\Control\Storage" /v "StorageD3InModernStandby" /t REG_DWORD /d "0" /f
 echo Disable network card power throttling
